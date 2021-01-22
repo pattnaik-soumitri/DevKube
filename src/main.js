@@ -1,4 +1,6 @@
 const {app, ipcMain, BrowserWindow, shell} = require('electron');
+const url = require('url');
+const path = require('path');
 app.setAppUserModelId(process.execPath);
 const exec = require('child_process').exec;
 
@@ -113,8 +115,13 @@ const createWindow = () => {
     });
     mainWindow.maximize();
 
-    // mainWindow.setMenu(null); // No menu
-    mainWindow.loadFile("index.html");
+    // and load the index.html of the app.
+    mainWindow.loadURL(url.format({
+        pathname: path.join(__dirname, '/index.html'), // important
+        protocol: 'file:',
+        slashes: true,
+        // baseUrl: 'src'
+    }));
 
     // Close handler
     mainWindow.on('close', () => {
@@ -159,7 +166,12 @@ ipcMain.on("open:portforward-form", (event, serviceName) => {
         darkTheme: true
     });
 
-    portForwardWindow.loadFile("input-port.html");
+    portForwardWindow.loadURL(url.format({
+        pathname: path.join(__dirname, '/input-port.html'), // important
+        protocol: 'file:',
+        slashes: true,
+        // baseUrl: 'src'
+    }));
     
     // Comment it out
     // portForwardWindow.webContents.openDevTools();

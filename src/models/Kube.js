@@ -15,7 +15,6 @@ class Kube {
      * - services
      * - deployments
      * - replicasets
-     * - nodes
      * 
      * @param {*} Kube
      */

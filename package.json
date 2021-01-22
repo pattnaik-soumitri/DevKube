@@ -1,9 +1,9 @@
 {
   "name": "DevKube",
   "productName": "DevKube",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A GUI that runs on top of kubectl",
-  "main": "main.js",
+  "main": "src/main.js",
   "scripts": {
     "start": "electron .",
     "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
