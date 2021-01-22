@@ -4,7 +4,7 @@
  > It runs `kubectl` commands for you.
 
 DevKube is a developer focused cross platform `kubectl` GUI. 
-It helps developers and testers by providing a simple yet function interface to perform some of the most frequently used kubectl operations by just click of a button, which in many cases are done by entering long and cumbersome kubectl commands. DevKube helps the team become more productive by **saving time** and removing **human error**.
+It helps developers and testers by providing a simple yet functional interface to perform some of the most frequently used kubectl operations by just click of a button, which in many cases are done by entering long and cumbersome kubectl commands. DevKube helps the team become more productive by **saving time** and removing **human error**.
 
 <br/>
 
