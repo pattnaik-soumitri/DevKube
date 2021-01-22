@@ -1,0 +1,19 @@
+{
+  "name": "DevKube",
+  "productName": "DevKube",
+  "version": "1.0.0",
+  "description": "A GUI that runs on top of kubectl",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
+    "package-win": "electron-packager . DevKube --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/icon_tiny.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"DevKube\"",
+    "package-linux": "electron-packager . DevKube --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds"
+  },
+  "author": "Soumitri Pattnaik",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^11.2.0",
+    "electron-packager": "^15.2.0"
+  }
+}

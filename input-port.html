@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+
+    <style>
+        body {
+            overflow-x: hidden;
+        }
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+
+    <title>PORT</title>
+</head>
+<body>
+    
+    <div style="vertical-align: middle; display: inline; padding: 10px;">
+        <form>
+            <input id="port" class="input is-small" type="number" placeholder="Port" maxlength="4" style="width: 80px; margin-left: 10px;" value="8080" />
+            <button class="button is-link is-small" type="submit">Submit</button>
+            <button id="cancel" class="button is-text is-small">Cancel</button>
+        </form>
+    </div>        
+    
+    <script>
+        const electron = require("electron");
+        const {ipcRenderer} = electron;
+
+        let kube = null;
+
+        let portInput = document.querySelector("#port")
+        let srcPort = "8080";
+        let destPort = portInput.value;    
+        let serviceName = null;
+        let svcOrDeployment = "service";
+
+        ipcRenderer.on("output:get_all", (e, data)=> {
+
+                    // SET THE PORT
+                    data.kube.services.forEach(service => {
+                        if(service.name == data.serviceName) {
+                            srcPort = service.ports[0];
+                            destPort = service.ports[0];
+                            portInput.value = destPort;
+                            serviceName = service.name;
+                        }    
+                    });
+        });
+
+        const form = document.querySelector("form");
+        // Form submit
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
+            
+            destPort = portInput.value;
+            console.log(destPort);
+            ipcRenderer.send("execute:command:ext", 'kubectl port-forward ' +  svcOrDeployment + '/' + serviceName + ' ' + destPort + ':' + srcPort);
+            ipcRenderer.send("close:portforward-form");
+        });
+
+        document.querySelector("#cancel")
+                .addEventListener("click", event => {
+                    event.preventDefault();
+                    ipcRenderer.send("close:portforward-form");
+                });
+    </script>
+</body>
+</html>

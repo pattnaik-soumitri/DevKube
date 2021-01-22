@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-extensions@6.2.7/dist/css/bulma-extensions.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bulma-extensions@6.2.7/dist/js/bulma-extensions.min.js"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    
+    <title>DevKube</title>
+
+    <style>
+        body {
+            font-size: 80%;
+        }
+        .footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 17px;
+            padding: 0px;
+            padding-left: 10pt;
+            padding-right: 10pt;
+            background: #3169DF;
+            font-size: small;
+            color: white;
+        }
+        .tag {
+           background: #3169DF;
+           color: white; 
+        }
+        .action-link {
+            margin-right: 10px;
+        }
+        table.table thead {
+            background-color: #e9effc;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <nav class="navbar" role="navigation" aria-label="main navigation" style="padding: 5px;">
+            <!-- THE ICON -->
+            <div class="navbar-brand">
+                <span class="navbar-item"><img src="./assets/icons/icon.png" style="height: 50px;"><b style="font-size: initial;">Dev<span style="color: #3169DF;">Kube</span></b></span>
+                <a role="button" id="burger" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar">
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                </a>
+            </div>
+
+            <div id="navbar" class="navbar-menu">
+                <!-- NAV START-->
+                <div class="navbar-start">
+                    <a class="navbar-item">POD</a>
+                    <a class="navbar-item">SERVICE</a>
+                    <a class="navbar-item">DEPLOYMENT</a>
+                    <div class="navbar-item has-dropdown is-hoverable">
+                        <a class="navbar-link">More</a>
+                        <div id="more-link" class="navbar-dropdown">
+                            <a class="navbar-item">REPLICASET</a>
+                            <a class="navbar-item">STATEFULSET</a>
+                        </div>
+                    </div>
+
+                    <!--CONTEXT-MENU-->
+                    <div id="context-menu" class="navbar-item has-dropdown is-hoverable" style="display: none;">
+                        <a id="context-current" class="navbar-link">
+                            Current Context
+                        </a>
+                
+                        <div id="context-options" class="navbar-dropdown">
+                        </div>
+                    </div>
+
+                    <!--NAMESPACE-MENU-->
+                    <div id="namespace-menu" class="navbar-item has-dropdown is-hoverable" style="display: none;">
+                        <a id="namespace-current" class="navbar-link">
+                            Current Namespace
+                        </a>
+                
+                        <div id="namespace-options" class="navbar-dropdown">
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- NAV END-->
+                <div class="navbar-end">
+
+                    <div class="navbar-item">
+                        <div class="buttons">
+                            <a id="refresh" class="button is-primary" style="display: none; background: #3169DF; color: white;">
+                                <span class="icon">
+                                    <i class="fas fa-sync-alt"></i>
+                                </span>
+                                <span>Refresh</span>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </nav>
+
+        
+        <div id="progress" >
+            <h3>Running kubectl ...</h3>
+            <progress class="progress is-small" max="100">15%</progress>
+        </div>
+        
+
+        <br/>
+
+        <div id="kube-container" align="center" style="display: none;">
+
+            <!-- PODS -->
+            <div id="pod-container" align="center" style="display: block;">
+            <span style="font-size: large; font-weight: bold;">PODS <span id="pod-count" class="tag is-small"></span> </span>
+                <table id="podList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                    <thead>
+                        <tr style="text-align: center;">
+                            <th>ACTION</th>
+                            <th>NAME</th>
+                            <th>IP</th>
+                            <th>READY</th>
+                            <th>STATUS</th>
+                            <th>RESTARTS</th>
+                            <th>AGE</th>
+                            <th>NODE</th>
+                            <th>DELETE</th>
+                        </tr>
+                    </thead>
+                </table>          
+                <br/><br/> 
+            </div>
+
+            <!-- SERVICES -->
+            <div id="service-container" align="center" style="display: none;">
+                <span style="font-size: large; font-weight: bold;">SERVICES <span id="service-count" class="tag is-small"></span> </span>
+                <table id="serviceList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                    <thead>
+                        <tr style="text-align: center;">
+                            <th>ACTION</th>
+                            <th>NAME</th>
+                            <th>TYPE</th>
+                            <th>CLUSTER-IP</th>
+                            <th>EXTERNAL-IP</th>
+                            <th>PORT(S)</th>
+                            <th>AGE</th>
+                            <th>SELECTOR</th>
+                            <th>DELETE</th>
+                        </tr>
+                    </thead>
+                </table>
+                <br/> <br/>
+            </div>
+
+
+            <!-- DEPLOYMENTS -->
+            <div id="deployment-container" align="center" style="display: none;">
+                <span style="font-size: large; font-weight: bold;">DEPLOYMENTS <span id="deployment-count" class="tag is-small"></span> </span>
+                <table id="deploymentList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                    <thead>
+                        <tr style="text-align: center;">
+                            <th>ACTION</th>
+                            <th>NAME</th>
+                            <th style="font-size: small;">DESIRED</th>
+                            <th style="font-size: small;">CURRENT</th>
+                            <th style="font-size: small;">UP-TO-DATE</th>
+                            <th style="font-size: small;">AVAILABLE</th>
+                            <th style="font-size: small;">AGE</th>
+                            <th>CONTAINERS</th>
+                            <th>IMAGES</th>
+                            <th>DELETE</th>
+                        </tr>
+                    </thead>
+                </table>
+                <br/> <br/>
+            </div>
+
+
+            <!-- REPLICASETS -->
+            <div id="replicaset-container" align="center" style="display: none;">
+                <span style="font-size: large; font-weight: bold;">REPLICASETS <span id="replicaset-count" class="tag is-small"></span> </span>
+                <table id="replicasetList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                    <thead>
+                        <tr style="text-align: center;">
+                            <th>Action</th>
+                            <th>NAME</th>
+                            <th>DESIRED</th>
+                            <th>CURRENT</th>
+                            <th>READY</th>
+                            <th>AGE</th>
+                            <th>CONTAINERS</th>
+                            <th>IMAGES</th>
+                        </tr>
+                    </thead>
+                </table>
+                <br/> <br/>
+            </div>
+
+
+            <!-- STATEFULSETS -->
+            <div id="statefulset-container" align="center" style="display: none;">
+                <span style="font-size: large; font-weight: bold;">STATEFULSETS <span id="statefulset-count" class="tag is-small"></span> </span>
+                <table id="statefulsetList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                    <thead>
+                        <tr style="text-align: center;">
+                            <th>ACTION</th>
+                            <th>NAME</th>
+                            <th>DESIRED</th>
+                            <th>CURRENT</th>
+                            <th>AGE</th>
+                            <th>CONTAINERS</th>
+                            <th>IMAGES</th>
+                            <th>DELETE</th>
+                        </tr>
+                    </thead>
+                </table>
+                <br/> <br/>
+            </div>
+                
+        </div>
+
+    </div>
+
+    
+    <footer class="footer">
+        <div style="display: flow-root;">
+            <span id="last-updated" style="display: flow-root; text-align: right;"></span>
+        </div>    
+    </footer>
+
+
+    <script src="index.js"></script>
+</body>
+</html>
