@@ -1,4 +1,4 @@
-# ![DevKube logo](https://github.com/pattnaik-soumitri/DevKube/blob/main/assets/icons/icon.png) &nbsp; **Dev<span style='color: #3169DF;'>Kube</span>**
+# **Dev<span style='color: #3169DF;'>Kube</span>**
 
 **Q.** What DevKube **<span style='color: green;'>is</span>**?<br/>
  > It runs `kubectl` commands for you.
