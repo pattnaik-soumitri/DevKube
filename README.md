@@ -21,27 +21,20 @@ It is not a one stop solution for all things kubectl / Kubernetes. Teams will st
 
 ## Setup
 
-### Step 1
+**Step 1**<br/>
 Download and install NodeJS from https://nodejs.org/en/download/ .
 
-<br/>
-
-### Step 2
-
+**Step 2**
 ```sh
 git clone https://github.com/pattnaik-soumitri/DevKube
 ```
 
-<br/>
-
-### Step 3
+**Step 3**
 ```sh
 npm install
 ```
 
-<br/>
-
-## Run
+**Run**
 ```sh
 npm start
 ```
