@@ -1,19 +1,50 @@
 {
-  "name": "DevKube",
+  "name": "devkube",
   "productName": "DevKube",
   "version": "0.1.0",
   "description": "A GUI that runs on top of kubectl",
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",
-    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
-    "package-win": "electron-packager . DevKube --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/windows/icon_tiny.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"DevKube\"",
-    "package-linux": "electron-packager . DevKube --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds"
+    "dist": "electron-builder"
   },
-  "author": "Soumitri Pattnaik",
+  "repository": "https://github.com/pattnaik-soumitri/DevKube",
+  "author": {
+    "name": "Soumitri Pattnaik",
+    "url": "https://github.com/pattnaik-soumitri"
+  },
   "license": "MIT",
   "devDependencies": {
-    "electron": "^11.2.0",
-    "electron-packager": "^15.2.0"
+    "electron": "^11.2.1",
+    "electron-builder": "^22.9.1"
+  },
+  "build": {
+    "appId": "devkube",
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "./assets/icons/windows/icon_tiny.ico"
+    },
+    "nsis": {
+      "installerIcon": "./assets/icons/windows/icon_tiny.ico",
+      "uninstallerIcon": "./assets/icons/windows/icon_tiny.ico",
+      "uninstallDisplayName": "DevKube",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": "always"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "type": "development",
+      "icon": "./assets/icons/mac/icon.icns",
+      "darkModeSupport": "false"
+    },
+    "dmg": {
+      "icon": "./assets/icons/mac/icon.icns",
+      "title": "${productName} ${version}"
+    }
   }
 }
