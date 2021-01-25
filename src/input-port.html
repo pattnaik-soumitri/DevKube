@@ -38,17 +38,17 @@
         let serviceName = null;
         let svcOrDeployment = "service";
 
-        ipcRenderer.on("output:get_all", (e, data)=> {
-
-                    // SET THE PORT
-                    data.kube.services.forEach(service => {
-                        if(service.name == data.serviceName) {
-                            srcPort = service.ports[0];
-                            destPort = service.ports[0];
-                            portInput.value = destPort;
-                            serviceName = service.name;
-                        }    
-                    });
+        ipcRenderer.on("output:get_all", 
+                        (e, data)=> {
+                            // SET THE PORT
+                            data.kube.services.forEach(service => {
+                                if(service.name == data.serviceName) {
+                                    srcPort = service.ports.split('/')[0];
+                                    destPort = srcPort;
+                                    portInput.value = destPort;
+                                    serviceName = service.name;
+                                }    
+                            });
         });
 
         const form = document.querySelector("form");

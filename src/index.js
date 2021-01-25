@@ -487,18 +487,12 @@ ipcRenderer.on("output:get_all", (e, kube) => {
 
                         tr.appendChild(tdName);
 
-                        // DESIRED
-                        let tdDesired = document.createElement("td");
-                        let DesiredTxt = document.createTextNode(deployment.desired);
-                        tdDesired.appendChild(DesiredTxt);
-                        tr.appendChild(tdDesired);
+                        // READY
+                        let tdReady = document.createElement("td");
+                        let ReadyTxt = document.createTextNode(deployment.ready);
+                        tdReady.appendChild(ReadyTxt);
+                        tr.appendChild(tdReady);
     
-
-                        // CURRENT
-                        let tdCurrent = document.createElement("td");
-                        let CurrentTxt = document.createTextNode(deployment.current);
-                        tdCurrent.appendChild(CurrentTxt);
-                        tr.appendChild(tdCurrent);
 
                         // UP-TO-DATE
                         let tdUpToDate = document.createElement("td");
@@ -506,11 +500,13 @@ ipcRenderer.on("output:get_all", (e, kube) => {
                         tdUpToDate.appendChild(UpToDateTxt);
                         tr.appendChild(tdUpToDate);
 
+
                         // AVAILABLE
                         let tdAvailable = document.createElement("td");
                         let AvailableTxt = document.createTextNode(deployment.available);
                         tdAvailable.appendChild(AvailableTxt);
                         tr.appendChild(tdAvailable);
+
 
                         // AGE
                         let tdAge = document.createElement("td");
@@ -524,11 +520,19 @@ ipcRenderer.on("output:get_all", (e, kube) => {
                         tdContainers.appendChild(ContainersTxt);
                         tr.appendChild(tdContainers);
 
+
                         // IMAGES
                         let tdImages = document.createElement("td");
                         let ImagesTxt = document.createTextNode(deployment.images);
                         tdImages.appendChild(ImagesTxt);
                         tr.appendChild(tdImages);
+
+
+                        // SELECTOR
+                        let tdSelector = document.createElement("td");
+                        let SelectorTxt = document.createTextNode(deployment.selector);
+                        tdSelector.appendChild(SelectorTxt);
+                        tr.appendChild(tdSelector);
 
                         // DELETE
                         let tdDelete = document.createElement("td");
@@ -722,18 +726,12 @@ ipcRenderer.on("output:get_all", (e, kube) => {
 
                         tr.appendChild(tdName);
 
-                        // DESIRED
-                        let tdDesired = document.createElement("td");
-                        let DesiredTxt = document.createTextNode(statefulset.desired);
-                        tdDesired.appendChild(DesiredTxt);
-                        tr.appendChild(tdDesired);
+                        // READY
+                        let tdReady = document.createElement("td");
+                        let ReadyTxt = document.createTextNode(statefulset.ready);
+                        tdReady.appendChild(ReadyTxt);
+                        tr.appendChild(tdReady);
     
-                        // CURRENT
-                        let tdCurrent = document.createElement("td");
-                        let CurrentTxt = document.createTextNode(statefulset.current);
-                        tdCurrent.appendChild(CurrentTxt);
-                        tr.appendChild(tdCurrent);
-
                         // AGE
                         let tdAge = document.createElement("td");
                         let AgeTxt = document.createTextNode(statefulset.age);
