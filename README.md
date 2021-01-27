@@ -27,13 +27,13 @@ It is not a one stop solution for all things kubectl / Kubernetes. Teams will st
 
 ```sh
 $ git clone https://github.com/pattnaik-soumitri/DevKube
+$ cd DevKube
 $ npm install
 ```
 
 ## Run DevKube
 
 ```sh
-$ cd DevKube
 $ npm start
 ```
 
