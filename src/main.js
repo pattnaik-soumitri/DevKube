@@ -48,8 +48,6 @@ const getAllResources = () => {
 // Then finally call the getNamespaces() method
 const getContexts = () => {
 
-    // mainWindow.webContents.send('showLoading');
-
     exec('kubectl config get-contexts', (err, stdout, stderr) => {
         // console.log(stdout);
 
@@ -87,7 +85,6 @@ const getContexts = () => {
 // because we can only know the current namespace after getting the current context
 const getNamespace = () => {
     console.log('getNamespace() called ...');
-    // mainWindow.webContents.send('showLoading');
 
     exec('kubectl get namespace', (err, stdout, stderr) => {
         // console.log(stdout);
