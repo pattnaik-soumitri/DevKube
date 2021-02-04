@@ -89,6 +89,7 @@ ipcRenderer.on('output:get_namespace', (e, namespaces, currentNamespace) => {
 
 // kubectl get all -o wide
 ipcRenderer.on("output:get_all", (e, kube) => {
+    console.log('output:get_all called on index.js');
     kube = kube;
     console.log(kube);
     lastUpdated = new Date();
@@ -154,7 +155,7 @@ ipcRenderer.on("output:get_all", (e, kube) => {
                         }
 
 
-                        // The YAMAL icon
+                        // The YAML icon
                         let iconYaml = document.createElement("i");
                         iconYaml.setAttribute("class", "fab fa-yahoo");
                         iconYaml.setAttribute("title", "YAML file");
@@ -785,6 +786,7 @@ ipcRenderer.on("output:get_all", (e, kube) => {
     statefulSetTable.appendChild(tbodyStatefulset);
     
 
+    console.log('The loading screen should go away now...');
     // Hide the progress bar
     document.querySelector("#progress").style.display ="none";
     // Show the tables
@@ -792,9 +794,9 @@ ipcRenderer.on("output:get_all", (e, kube) => {
     // Show the refresh button
     refreshBtn.style.display = 'block';
     // Show the context menu
-    contextMenu.style.display = "flex";
+    // contextMenu.style.display = "flex";
     // Show the namespace menue
-    namespaceMenu.style.display = 'flex';
+    // namespaceMenu.style.display = 'flex';
 });
 
 ipcRenderer.on("showLoading", e => {
@@ -803,8 +805,8 @@ ipcRenderer.on("showLoading", e => {
     // Hide the data tables and the refresh button
     kubeContainer.style.display = "none";
     refreshBtn.style.display = "none";
-    contextMenu.style.display = "none";
-    namespaceMenu.style.display = 'none';
+    // contextMenu.style.display = "none";
+    // namespaceMenu.style.display = 'none';
 });
 
 

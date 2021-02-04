@@ -2,7 +2,7 @@
   "name": "DevKube",
   "productName": "DevKube",
   "version": "0.1.0",
-  "description": "A GUI that runs on top of kubectl",
+  "description": "It runs kubectl commands for you.",
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",
@@ -11,7 +11,7 @@
     "package-linux": "electron-packager . DevKube --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds"
   },
   "author": "Soumitri Pattnaik",
-  "license": "MIT",
+  "license": "GNU GPLv3",
   "devDependencies": {
     "electron": "^11.2.0",
     "electron-packager": "^15.2.0"

@@ -18,14 +18,28 @@ let namespaces = [];
 let currentNamespace = null;
 let currentNamespaceName = 'default';
 
-const getAllResources = () => {
+const sendDataToWindow = (win, msg, ...dataArr) => {
+    if(dataArr && dataArr.length > 0) {
+        win.webContents.send(msg, ...dataArr);
+        win.webContents.on('did-finish-load', () => {
+            win.webContents.send(msg, ...dataArr);
+        });
+    } else {
+        win.webContents.send(msg);
+        win.webContents.on('did-finish-load', () => {
+            win.webContents.send(msg);
+        });
+    }
+}
 
-    mainWindow.webContents.send('showLoading');
+const getAllResources = () => {
+    console.log('getAllResources() called ...');
+    sendDataToWindow(mainWindow, 'showLoading');
 
     exec('kubectl get all -o wide', (err, stdout, stderr) => {
         console.log(stdout);
         kube = new Kube(stdout);
-        mainWindow.webContents.send('output:get_all', kube);
+        sendDataToWindow(mainWindow, 'output:get_all', kube);
     });
 }
 
@@ -33,8 +47,6 @@ const getAllResources = () => {
 // Populate the context drop down
 // Then finally call the getNamespaces() method
 const getContexts = () => {
-
-    mainWindow.webContents.send('showLoading');
 
     exec('kubectl config get-contexts', (err, stdout, stderr) => {
         // console.log(stdout);
@@ -59,10 +71,7 @@ const getContexts = () => {
             currentNamespaceName = currentContext.namespace;
         }
 
-        mainWindow.webContents.send('output:get_context', contexts);
-        mainWindow.webContents.on('did-finish-load', () => {
-            mainWindow.webContents.send('output:get_context', contexts);
-        });
+        sendDataToWindow(mainWindow, 'output:get_context', contexts);
 
         // Call the get namespace
         getNamespace();
@@ -76,7 +85,6 @@ const getContexts = () => {
 // because we can only know the current namespace after getting the current context
 const getNamespace = () => {
     console.log('getNamespace() called ...');
-    mainWindow.webContents.send('showLoading');
 
     exec('kubectl get namespace', (err, stdout, stderr) => {
         // console.log(stdout);
@@ -96,11 +104,7 @@ const getNamespace = () => {
         currentNamespace = namespaces.filter(namespace => namespace.name === currentNamespaceName)[0];
         console.log('Current namespace : ', currentNamespace);
 
-        mainWindow.webContents.send('output:get_namespace', namespaces, currentNamespace);
-        mainWindow.webContents.on('did-finish-load', () => {
-            mainWindow.webContents.send('output:get_namespace', namespaces, currentNamespace);
-        });
-        
+        sendDataToWindow(mainWindow, 'output:get_namespace', namespaces, currentNamespace);
     });
 }
 
@@ -130,8 +134,8 @@ const createWindow = () => {
         app.quit();
     });
 
-    getContexts(); // Get contexts from kubectl
     getAllResources(); // Get data from kubectl
+    getContexts(); // Get contexts from kubectl
 };
 
 // Execute command in external cmd
@@ -176,9 +180,7 @@ ipcMain.on("open:portforward-form", (event, serviceName) => {
     // Comment it out
     // portForwardWindow.webContents.openDevTools();
     
-    portForwardWindow.webContents.on('did-finish-load', () => {
-        portForwardWindow.webContents.send("output:get_all", {kube, serviceName});
-    });
+    sendDataToWindow(portForwardWindow, 'output:get_all', {kube, serviceName});
 });
 
 ipcMain.on("close:portforward-form", event => {
@@ -192,7 +194,7 @@ ipcMain.on("getPods", event => {
 
 // Switch context
 ipcMain.on('switchContext', (event, newContext) => {
-    mainWindow.webContents.send('showLoading');
+    sendDataToWindow(mainWindow, 'showLoading');
 
     exec(`kubectl config use-context ${newContext}`, (err, stdout, stderr) => {
         console.log(stdout);
@@ -202,7 +204,7 @@ ipcMain.on('switchContext', (event, newContext) => {
             getContexts();
 
         } else {
-            // TO DO
+            // TODO: Implement error handling when switchContext command fails.
             
         }
     });
@@ -212,7 +214,7 @@ ipcMain.on('switchContext', (event, newContext) => {
 // Switch namespace
 ipcMain.on('switchNamespace', (event, newNamespace) => {
     console.log(`Switching to namespace=${newNamespace}`);
-    mainWindow.webContents.send('showLoading');
+    sendDataToWindow(mainWindow, 'showLoading');
 
     exec(`kubectl config set-context --current --namespace=${newNamespace}`, (err, stdout, stderr) => {
         console.log(stdout);
@@ -222,7 +224,7 @@ ipcMain.on('switchNamespace', (event, newNamespace) => {
             getContexts();
 
         } else {
-            // TO DO
+            // TODO: Implement error handling when switch namespace command fails.
             
         }
     });
