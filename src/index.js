@@ -30,61 +30,69 @@ burgerIcon.addEventListener("click", event => {
 // Refresh action
 refreshBtn.addEventListener("click", event => {
     event.preventDefault();
-    ipcRenderer.send("getPods");
+    ipcRenderer.send("getResources");
 });
 
 
 // populate the context dropdown
-ipcRenderer.on("output:get_context", (e, contexts) => {
-
+ipcRenderer.on("output:get_context", (e, data) => {
     let contextOptions = document.querySelector("#context-options");
     let currentContext = document.querySelector("#context-current");
-
     contextOptions.innerHTML = '';
-    contexts.forEach(context => {
-        if(context.current) {
-            currentContext.innerHTML = "Context - " + context.name;
-        } else {
-            let link = document.createElement("a");
-            link.className = "navbar-item";
-            link.innerHTML = context.name + " <br/> " + context.cluster;
 
-            link.addEventListener("click", event => {
-                let newContext = event.target.innerHTML.split('<br>')[0].trim();
-                ipcRenderer.send("switchContext", newContext);
-            });
+    if(data.showLoading) {
+        currentContext.innerHTML = 'Context &nbsp; <img src="../assets/animations/loading_small.svg" />';
+    } else {
 
-            contextOptions.appendChild(link);
-        }
-    });
+        data.contexts.forEach(context => {
+            if(context.current) {
+                currentContext.innerHTML = "Context - " + context.name;
+            } else {
+                let link = document.createElement("a");
+                link.className = "navbar-item";
+                link.innerHTML = context.name + " <br/> " + context.cluster;
+    
+                link.addEventListener("click", event => {
+                    let newContext = event.target.innerHTML.split('<br>')[0].trim();
+                    ipcRenderer.send("switchContext", newContext);
+                });
+    
+                contextOptions.appendChild(link);
+            }
+        });
+    }
 
 });
 
 // populate the namespace dropdown
-ipcRenderer.on('output:get_namespace', (e, namespaces, currentNamespace) => {
-    console.log(namespaces);
-    console.log(currentNamespace);
+ipcRenderer.on('output:get_namespace', (e, data) => {
 
     let namespaceOptions = document.getElementById('namespace-options');
     let currentNamespaceLink = document.getElementById('namespace-current');
-
     namespaceOptions.innerHTML = '';
-    namespaces.forEach(namespace => {
-        if(namespace.name === currentNamespace.name) {
-            currentNamespaceLink.innerHTML = 'Namespace - ' + namespace.name;
-        } else {
-            let link = document.createElement('a');
-            link.className = "navbar-item";
-            link.innerHTML = namespace.name;
 
-            link.addEventListener("click", event => {
-                let newNamespace = event.target.innerHTML.trim();
-                ipcRenderer.send("switchNamespace", newNamespace);
-            });
+    if(data.showLoading) {
 
-            namespaceOptions.appendChild(link);
-        }
-    });
+        currentNamespaceLink.innerHTML = 'Namespace &nbsp; <img src="../assets/animations/loading_small.svg" />';;
+    } else {
+
+        data.namespaces.forEach(namespace => {
+            if(namespace.name === data.currentNamespace.name) {
+                currentNamespaceLink.innerHTML = 'Namespace - ' + namespace.name;
+            } else {
+                let link = document.createElement('a');
+                link.className = "navbar-item";
+                link.innerHTML = namespace.name;
+    
+                link.addEventListener("click", event => {
+                    let newNamespace = event.target.innerHTML.trim();
+                    ipcRenderer.send("switchNamespace", newNamespace);
+                });
+    
+                namespaceOptions.appendChild(link);
+            }
+        });
+    }
 });
 
 // kubectl get all -o wide
