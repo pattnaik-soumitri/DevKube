@@ -47,6 +47,10 @@ const getAllResources = () => {
 // Populate the context drop down
 // Then finally call the getNamespaces() method
 const getContexts = () => {
+    console.log('getContexts() called ...');
+
+    // call to show loading animation
+    sendDataToWindow(mainWindow, 'output:get_context', {showLoading:true, contexts: null});
 
     exec('kubectl config get-contexts', (err, stdout, stderr) => {
         // console.log(stdout);
@@ -71,7 +75,8 @@ const getContexts = () => {
             currentNamespaceName = currentContext.namespace;
         }
 
-        sendDataToWindow(mainWindow, 'output:get_context', contexts);
+        // Call to render actual data
+        sendDataToWindow(mainWindow, 'output:get_context', {showLoading:false, contexts});
 
         // Call the get namespace
         getNamespace();
@@ -85,6 +90,9 @@ const getContexts = () => {
 // because we can only know the current namespace after getting the current context
 const getNamespace = () => {
     console.log('getNamespace() called ...');
+
+    // Call to show loading animation
+    sendDataToWindow(mainWindow, 'output:get_namespace', {showLoading: true, namespaces: null, currentNamespace: null});
 
     exec('kubectl get namespace', (err, stdout, stderr) => {
         // console.log(stdout);
@@ -104,8 +112,19 @@ const getNamespace = () => {
         currentNamespace = namespaces.filter(namespace => namespace.name === currentNamespaceName)[0];
         console.log('Current namespace : ', currentNamespace);
 
-        sendDataToWindow(mainWindow, 'output:get_namespace', namespaces, currentNamespace);
+        // Call to render actual data
+        sendDataToWindow(mainWindow, 'output:get_namespace', {showLoading: false, namespaces, currentNamespace});
     });
+}
+
+// The bundles two method calls
+// 1. getAllResources()
+// 2. getContexts() which internally calls getNamespaces()
+// This will be called to refresh resources, context and namespace.
+// This will be called on start up, when context is changed, when namespace is changed, when refresh button is clicked
+const refresh = () => {
+    getAllResources();
+    getContexts();
 }
 
 // This is the main browser window
@@ -134,8 +153,9 @@ const createWindow = () => {
         app.quit();
     });
 
-    getAllResources(); // Get data from kubectl
-    getContexts(); // Get contexts from kubectl
+    // Get data from kubectl
+    // Get contexts from kubectl
+    refresh();
 };
 
 // Execute command in external cmd
@@ -188,8 +208,8 @@ ipcMain.on("close:portforward-form", event => {
 });
 
 
-ipcMain.on("getPods", event => {
-    getAllResources();
+ipcMain.on("getResources", event => {
+    refresh();
 });
 
 // Switch context
@@ -200,8 +220,7 @@ ipcMain.on('switchContext', (event, newContext) => {
         console.log(stdout);
         if(!stderr && stdout.startsWith(`Switched to context "${newContext}".`)) {
 
-            getAllResources();
-            getContexts();
+            refresh();
 
         } else {
             // TODO: Implement error handling when switchContext command fails.
@@ -220,8 +239,7 @@ ipcMain.on('switchNamespace', (event, newNamespace) => {
         console.log(stdout);
         if(!stderr && stdout.startsWith(`Context "${currentContext.name}" modified.`)) {
 
-            getAllResources();
-            getContexts();
+            refresh();
 
         } else {
             // TODO: Implement error handling when switch namespace command fails.
