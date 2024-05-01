@@ -15,11 +15,13 @@ It is not a one stop solution for all things kubectl / Kubernetes. Teams will st
 <br/>
 
 ## Prerequisites
+
 - DevKube runs on top of `kubectl`, so it is required to [setup and configure](https://kubernetes.io/docs/tasks/tools/install-kubectl/) kubectl before using DevKube.
 
 <br/>
 
 ## Installation
+
 1. Download and install [Node.js](https://nodejs.org/en/download/).
 2. Clone DevKube repo
 3. Install node dependencies
@@ -31,19 +33,22 @@ $ npm install
 ```
 
 ## Run DevKube
+
 ```sh
 $ npm start
 ```
 
 ## Update DevKube
+
 - As of now the application does not have a installer or auto-update functionality. However the functionalities are in the pipeline to be worked upon. The source code is directly run to use the application as of now.
 - So for now, new features/enhancements/bugfixes etc, will be pushed to the `main` branch (the default branch after `git clone`). So it is advisable to **run `git pull` few times a week** to be able to get the stay on the bleeding edge of the software.
 
 <br/>
 
 ## Features
-- View and perform operations on K8S resources such as `pod`, `service`, `deployment`, `replicaset`, `statefulset`.
-- Switch `context`.
+
+- View and perform operations on K8S resources such as `pod`, `service`, `deployment`, `replicaset`, `statefulset`, `daemonset`, `job`, `cronjob`.
+- Switch `cluster`/`context`.
 - Switch `namespace`.
 
 - **Common features**
