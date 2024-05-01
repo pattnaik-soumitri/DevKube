@@ -1245,6 +1245,7 @@ document.querySelector("#workloads-link")
         .forEach(element => {
             element.addEventListener("click", e => {
                 switch(e.target.innerHTML) {
+                    case 'ALL' : showOneHideOthers(null); break;
                     case 'POD' : showOneHideOthers(podContainer); break;
                     case 'SERVICE' : showOneHideOthers(serviceContainer); break;
                     case 'DEPLOYMENT' : showOneHideOthers(deploymentContainer); break;
@@ -1259,15 +1260,22 @@ document.querySelector("#workloads-link")
 );
 
 const showOneHideOthers = (container) => {
-    podContainer.style.display = 'none';
-    serviceContainer.style.display = 'none';
-    deploymentContainer.style.display = 'none';
-    replicasetContainer.style.display = 'none';
-    stateFulSetContainer.style.display = 'none';
-    daemonSetContainer.style.display = 'none';
-    jobContainer.style.display = 'none';
-    cronjobContainer.style.display = 'none';
-    container.style.display = 'block';
+    let display = 'block';
+    if(container) {
+        display = 'none';
+    }
+    podContainer.style.display = display;
+    serviceContainer.style.display = display;
+    deploymentContainer.style.display = display;
+    replicasetContainer.style.display = display;
+    stateFulSetContainer.style.display = display;
+    daemonSetContainer.style.display = display;
+    jobContainer.style.display = display;
+    cronjobContainer.style.display = display;
+
+    if(container) {
+        container.style.display = 'block';
+    }
 }
 
 // Copy text to clipboard

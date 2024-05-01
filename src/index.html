@@ -19,23 +19,26 @@
             left: 0;
             bottom: 0;
             width: 100%;
-            height: 17px;
+            height: 20px;
             padding: 0px;
             padding-left: 10pt;
             padding-right: 10pt;
-            background: #3169DF;
+            background: #c8daff;
             font-size: small;
-            color: white;
-        }
-        .tag {
-           background: #3169DF;
-           color: white; 
         }
         .action-link {
             margin-right: 10px;
         }
         table.table thead {
             background-color: #e9effc;
+        }
+        .container-title {
+            font-size: large; 
+            font-weight: 600;
+        }
+        .container-title .tag {
+            margin-bottom: 0.5rem;
+            /* border-radius: 1rem; */
         }
     </style>
 </head>
@@ -58,6 +61,7 @@
                     <div class="navbar-item has-dropdown is-hoverable">
                         <a class="navbar-link">Workloads</a>
                         <div id="workloads-link" class="navbar-dropdown">
+                            <a class="navbar-item">ALL</a>
                             <a class="navbar-item">POD</a>
                             <a class="navbar-item">SERVICE</a>
                             <a class="navbar-item">DEPLOYMENT</a>
@@ -100,13 +104,14 @@
 
                     <!-- REFRESH BUTTON -->
                     <div class="navbar-item">
-                        <div class="buttons">
+                        <div style="display: flex; flex-direction: column;">
                             <a id="refresh" class="button is-primary" style="display: none; background: #3169DF; color: white;">
                                 <span class="icon">
                                     <i class="fas fa-sync-alt"></i>
                                 </span>
                                 <span>Refresh</span>
                             </a>
+                            <span id="last-updated"></span>
                         </div>
                     </div>
     
@@ -129,7 +134,7 @@
                 <!-- PODS -->
                 <!-- pod: [ 'name','ready','status','restarts','age','ip','node','nominatednode','readinessgates' ], -->
                 <div id="pod-container" align="center" style="display: block;">
-                <span style="font-size: large; font-weight: bold;">PODS <span id="pod-count" class="tag is-small is-light"></span> </span>
+                <span class="container-title">PODS <span id="pod-count" class="tag is-small is-light"></span> </span>
                     <table id="podList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                         <thead>
                             <tr style="text-align: center;">
@@ -150,8 +155,8 @@
     
                 <!-- SERVICES -->
                 <!-- service: [ 'name','type','clusterIp','externalIp','ports','age','selector' ], -->
-                <div id="service-container" align="center" style="display: none;">
-                    <span style="font-size: large; font-weight: bold;">SERVICES <span id="service-count" class="tag is-small"></span> </span>
+                <div id="service-container" align="center" style="display: block;">
+                    <span class="container-title">SERVICES <span id="service-count" class="tag is-small"></span> </span>
                     <table id="serviceList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                         <thead>
                             <tr style="text-align: center;">
@@ -173,8 +178,8 @@
     
                 <!-- DEPLOYMENTS -->
                 <!-- deployment: [ 'name','ready','upToDate','available','age','containers','images','selector' ], -->
-                <div id="deployment-container" align="center" style="display: none;">
-                    <span style="font-size: large; font-weight: bold;">DEPLOYMENTS <span id="deployment-count" class="tag is-small"></span> </span>
+                <div id="deployment-container" align="center" style="display: block;">
+                    <span class="container-title">DEPLOYMENTS <span id="deployment-count" class="tag is-small"></span> </span>
                     <table id="deploymentList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                         <thead>
                             <tr style="text-align: center;">
@@ -197,8 +202,8 @@
     
                 <!-- REPLICASETS -->
                 <!-- replicaset: [ 'name','desired','current','ready','age','containers','images','selector' ], -->
-                <div id="replicaset-container" align="center" style="display: none;">
-                    <span style="font-size: large; font-weight: bold;">REPLICASETS <span id="replicaset-count" class="tag is-small"></span> </span>
+                <div id="replicaset-container" align="center" style="display: block;">
+                    <span class="container-title">REPLICASETS <span id="replicaset-count" class="tag is-small"></span> </span>
                     <table id="replicasetList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                         <thead>
                             <tr style="text-align: center;">
@@ -219,8 +224,8 @@
     
                 <!-- STATEFULSETS -->
                 <!-- statefulset: [ 'name', 'ready', 'age', 'containers', 'images' ], -->
-                <div id="statefulset-container" align="center" style="display: none;">
-                    <span style="font-size: large; font-weight: bold;">STATEFULSETS <span id="statefulset-count" class="tag is-small"></span> </span>
+                <div id="statefulset-container" align="center" style="display: block;">
+                    <span class="container-title">STATEFULSETS <span id="statefulset-count" class="tag is-small"></span> </span>
                     <table id="statefulsetList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                         <thead>
                             <tr style="text-align: center;">
@@ -239,8 +244,8 @@
 
                 <!-- DAEMONSETS -->
                 <!-- daemonset: ['name', 'reference', 'targets', 'minpods', 'maxpods', 'replicas', 'age'], -->
-                <div id="daemonset-container" align="center" style="display: none;">
-                    <span style="font-size: large; font-weight: bold;">DAEMONSETS <span id="daemonset-count" class="tag is-small"></span> </span>
+                <div id="daemonset-container" align="center" style="display: block;">
+                    <span class="container-title">DAEMONSETS <span id="daemonset-count" class="tag is-small"></span> </span>
                     <table id="daemonsetList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                         <thead>
                             <tr style="text-align: center;">
@@ -261,8 +266,8 @@
 
                 <!-- JOBS -->
                 <!-- job: [ NAME COMPLETIONS DURATION AGE CONTAINERS IMAGES SELECTOR ], -->
-                <div id="job-container" align="center" style="display: none;">
-                    <span style="font-size: large; font-weight: bold;">JOBS <span id="job-count" class="tag is-small"></span> </span>
+                <div id="job-container" align="center" style="display: block;">
+                    <span class="container-title">JOBS <span id="job-count" class="tag is-small"></span> </span>
                     <table id="jobList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                         <thead>
                             <tr style="text-align: center;">
@@ -283,8 +288,8 @@
 
                 <!-- CRONJOBS -->
                 <!-- cronjobs: [ NAME SCHEDULE SUSPEND ACTIVE LAST-SCHEDULE AGE CONTAINERS IMAGES SELECTOR ] -->
-                <div id="cronjob-container" align="center" style="display: none;">
-                    <span style="font-size: large; font-weight: bold;">CRONJOBS <span id="cronjob-count" class="tag is-small"></span> </span>
+                <div id="cronjob-container" align="center" style="display: block;">
+                    <span class="container-title">CRONJOBS <span id="cronjob-count" class="tag is-small"></span> </span>
                     <table id="cronjobList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                         <thead>
                             <tr style="text-align: center;">
@@ -311,8 +316,8 @@
     </main>
     
     <footer class="footer">
-        <div style="display: flow-root;">
-            <span id="last-updated" style="display: flow-root; text-align: right;"></span>
+        <div style="display: flex; justify-content: center;">
+            Crafted with 💗 by Soumitri
         </div>    
     </footer>
 
