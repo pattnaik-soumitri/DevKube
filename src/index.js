@@ -1227,7 +1227,7 @@ const links = document.querySelectorAll('a.navbar-item');
 
 links.forEach(a => a.addEventListener("click", e => {
 
-    switch(e.target.innerHTML) {
+    switch(e.target.innerHTML.toUpperCase()) {
         case 'POD' : showOneHideOthers(podContainer); break;
         case 'SERVICE' : showOneHideOthers(serviceContainer); break;
         case 'DEPLOYMENT' : showOneHideOthers(deploymentContainer); break;
@@ -1244,7 +1244,7 @@ document.querySelector("#workloads-link")
         .querySelectorAll("a.navbar-item")
         .forEach(element => {
             element.addEventListener("click", e => {
-                switch(e.target.innerHTML) {
+                switch(e.target.innerHTML.toUpperCase()) {
                     case 'ALL' : showOneHideOthers(null); break;
                     case 'POD' : showOneHideOthers(podContainer); break;
                     case 'SERVICE' : showOneHideOthers(serviceContainer); break;

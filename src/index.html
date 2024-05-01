@@ -11,7 +11,7 @@
 
     <style>
         body {
-            font-size: 80%;
+            font-size: small;
         }
         
         .footer {
@@ -58,20 +58,57 @@
             <div id="navbar" class="navbar-menu">
                 <!-- NAV START-->
                 <div class="navbar-start">
+
                     <div class="navbar-item has-dropdown is-hoverable">
                         <a class="navbar-link">Workloads</a>
                         <div id="workloads-link" class="navbar-dropdown">
-                            <a class="navbar-item">ALL</a>
-                            <a class="navbar-item">POD</a>
-                            <a class="navbar-item">SERVICE</a>
-                            <a class="navbar-item">DEPLOYMENT</a>
-                            <a class="navbar-item">REPLICASET</a>
-                            <a class="navbar-item">STATEFULSET</a>
-                            <a class="navbar-item">DAEMONSET</a>
-                            <a class="navbar-item">JOB</a>
-                            <a class="navbar-item">CRONJOB</a>
+                            <a class="navbar-item">All</a>
+                            <a class="navbar-item">Pod</a>
+                            <a class="navbar-item">Service</a>
+                            <a class="navbar-item">Deployment</a>
+                            <a class="navbar-item">Replicaset</a>
+                            <a class="navbar-item">Statefulset</a>
+                            <a class="navbar-item">Daemonset</a>
+                            <a class="navbar-item">Job</a>
+                            <a class="navbar-item">Cronjob</a>
                         </div>
                     </div>
+
+
+                    <div class="navbar-item has-dropdown is-hoverable">
+                        <a class="navbar-link">Storage</a>
+                        <div id="storage-link" class="navbar-dropdown">
+                            <a class="navbar-item">All</a>
+                            <a class="navbar-item">Persistent Volume</a>
+                            <a class="navbar-item">Persistent Volumes Claim</a>
+                            <a class="navbar-item">Storage Class</a>
+                        </div>
+                    </div>
+
+
+                    <div class="navbar-item has-dropdown is-hoverable">
+                        <a class="navbar-link">Configuration</a>
+                        <div id="config-link" class="navbar-dropdown">
+                            <a class="navbar-item">All</a>
+                            <a class="navbar-item">Configmap</a>
+                            <a class="navbar-item">Secret</a>
+                        </div>
+                    </div>
+
+
+                    <div class="navbar-item has-dropdown is-hoverable">
+                        <a class="navbar-link">Auth</a>
+                        <div id="config-link" class="navbar-dropdown">
+                            <a class="navbar-item">All</a>
+                            <a class="navbar-item">Service Account</a>
+                            <a class="navbar-item">Cluster Role</a>
+                            <a class="navbar-item">Role</a>
+                            <a class="navbar-item">Role Binding</a>
+                            <a class="navbar-item">Cluster Role Binding</a>
+                        </div>
+                    </div>
+
+                    <a class="navbar-item">Events</a>
     
                 </div>
     
@@ -155,7 +192,7 @@
     
                 <!-- SERVICES -->
                 <!-- service: [ 'name','type','clusterIp','externalIp','ports','age','selector' ], -->
-                <div id="service-container" align="center" style="display: block;">
+                <div id="service-container" align="center" style="display: none;">
                     <span class="container-title">SERVICES <span id="service-count" class="tag is-small"></span> </span>
                     <table id="serviceList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                         <thead>
@@ -178,7 +215,7 @@
     
                 <!-- DEPLOYMENTS -->
                 <!-- deployment: [ 'name','ready','upToDate','available','age','containers','images','selector' ], -->
-                <div id="deployment-container" align="center" style="display: block;">
+                <div id="deployment-container" align="center" style="display: none;">
                     <span class="container-title">DEPLOYMENTS <span id="deployment-count" class="tag is-small"></span> </span>
                     <table id="deploymentList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                         <thead>
@@ -202,7 +239,7 @@
     
                 <!-- REPLICASETS -->
                 <!-- replicaset: [ 'name','desired','current','ready','age','containers','images','selector' ], -->
-                <div id="replicaset-container" align="center" style="display: block;">
+                <div id="replicaset-container" align="center" style="display: none;">
                     <span class="container-title">REPLICASETS <span id="replicaset-count" class="tag is-small"></span> </span>
                     <table id="replicasetList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                         <thead>
@@ -224,7 +261,7 @@
     
                 <!-- STATEFULSETS -->
                 <!-- statefulset: [ 'name', 'ready', 'age', 'containers', 'images' ], -->
-                <div id="statefulset-container" align="center" style="display: block;">
+                <div id="statefulset-container" align="center" style="display: none;">
                     <span class="container-title">STATEFULSETS <span id="statefulset-count" class="tag is-small"></span> </span>
                     <table id="statefulsetList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                         <thead>
@@ -244,7 +281,7 @@
 
                 <!-- DAEMONSETS -->
                 <!-- daemonset: ['name', 'reference', 'targets', 'minpods', 'maxpods', 'replicas', 'age'], -->
-                <div id="daemonset-container" align="center" style="display: block;">
+                <div id="daemonset-container" align="center" style="display: none;">
                     <span class="container-title">DAEMONSETS <span id="daemonset-count" class="tag is-small"></span> </span>
                     <table id="daemonsetList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                         <thead>
@@ -266,7 +303,7 @@
 
                 <!-- JOBS -->
                 <!-- job: [ NAME COMPLETIONS DURATION AGE CONTAINERS IMAGES SELECTOR ], -->
-                <div id="job-container" align="center" style="display: block;">
+                <div id="job-container" align="center" style="display: none;">
                     <span class="container-title">JOBS <span id="job-count" class="tag is-small"></span> </span>
                     <table id="jobList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                         <thead>
@@ -288,7 +325,7 @@
 
                 <!-- CRONJOBS -->
                 <!-- cronjobs: [ NAME SCHEDULE SUSPEND ACTIVE LAST-SCHEDULE AGE CONTAINERS IMAGES SELECTOR ] -->
-                <div id="cronjob-container" align="center" style="display: block;">
+                <div id="cronjob-container" align="center" style="display: none;">
                     <span class="container-title">CRONJOBS <span id="cronjob-count" class="tag is-small"></span> </span>
                     <table id="cronjobList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                         <thead>
