@@ -99,7 +99,7 @@ ipcRenderer.on('output:get_namespace', (e, data) => {
 ipcRenderer.on("output:get_all", (e, kube) => {
     console.log('output:get_all called on index.js');
     kube = kube;
-    console.log(kube);
+    console.log("Kube", kube);
     lastUpdated = new Date();
     lastUpdatedSpan.innerHTML = `Refreshed : <b>${lastUpdated.toLocaleTimeString()}</b>`;
 
@@ -114,7 +114,7 @@ ipcRenderer.on("output:get_all", (e, kube) => {
         oldTbodyPod = null;
     }
 
-    // Ste the pod count
+    // Set the pod count
     document.querySelector("#pod-count").innerHTML = kube.pods.length;
 
     let tbodyPod = document.createElement("tbody");
@@ -167,7 +167,7 @@ ipcRenderer.on("output:get_all", (e, kube) => {
                         let iconYaml = document.createElement("i");
                         iconYaml.setAttribute("class", "fab fa-yahoo");
                         iconYaml.setAttribute("title", "YAML file");
-                        if(pod.status !== "Running") {
+                        if(isFailedStatus(pod.status)) {
                             iconYaml.style.color = "RED";
                         }
                         // The YAML link
@@ -186,7 +186,7 @@ ipcRenderer.on("output:get_all", (e, kube) => {
                         let iconDesc = document.createElement("i");
                         iconDesc.setAttribute("class", "fas fa-question-circle");
                         iconDesc.setAttribute("title", "Describe POD");
-                        if(pod.status !== "Running") {
+                        if(isFailedStatus(pod.status)) {
                             iconDesc.style.color = "RED";
                         }
                         // The DESCRIBE link
@@ -238,7 +238,7 @@ ipcRenderer.on("output:get_all", (e, kube) => {
                         tr.appendChild(tdStatus);
 
                         // Set the color depending on the status
-                        if(pod.status !== "Running") {
+                        if(isFailedStatus(pod.status)) {
                             tr.setAttribute("style", "color: red;");
                         }
 
@@ -306,7 +306,7 @@ ipcRenderer.on("output:get_all", (e, kube) => {
         oldTbodyService.remove();
     }
 
-    // Ste the service count
+    // Set the service count
     document.querySelector("#service-count").innerHTML = kube.services.length;
 
     let tbodyService = document.createElement("tbody");
@@ -337,7 +337,7 @@ ipcRenderer.on("output:get_all", (e, kube) => {
                         // The DESCRIBE icon
                         let iconDesc = document.createElement("i");
                         iconDesc.setAttribute("class", "fas fa-question-circle");
-                        iconDesc.setAttribute("title", "Describe POD");
+                        iconDesc.setAttribute("title", "Describe SERVICE");
                         // The DESCRIBE link
                         let linkDesc = document.createElement("a");
                         linkDesc.href = "#";
@@ -452,7 +452,7 @@ ipcRenderer.on("output:get_all", (e, kube) => {
         oldTbodyDeployment.remove();
     }
 
-    // Ste the deployment count
+    // Set the deployment count
     document.querySelector("#deployment-count").innerHTML = kube.deployments.length;
 
     let tbodyDeployment = document.createElement("tbody");
@@ -467,7 +467,7 @@ ipcRenderer.on("output:get_all", (e, kube) => {
                         // The DESCRIBE icon
                         let iconDesc = document.createElement("i");
                         iconDesc.setAttribute("class", "fas fa-question-circle");
-                        iconDesc.setAttribute("title", "Describe POD");
+                        iconDesc.setAttribute("title", "Describe DEPLOYMENT");
                         // The DESCRIBE link
                         let linkDesc = document.createElement("a");
                         linkDesc.href = "#";
@@ -590,7 +590,7 @@ ipcRenderer.on("output:get_all", (e, kube) => {
         oldTbodyReplicaset.remove();
     }
 
-    // Ste the replicaset count
+    // Set the replicaset count
     document.querySelector("#replicaset-count").innerHTML = kube.deployments.length;
 
     let tbodyReplicaset = document.createElement("tbody");
@@ -605,7 +605,7 @@ ipcRenderer.on("output:get_all", (e, kube) => {
                          // The DESCRIBE icon
                          let iconDesc = document.createElement("i");
                          iconDesc.setAttribute("class", "fas fa-question-circle");
-                         iconDesc.setAttribute("title", "Describe POD");
+                         iconDesc.setAttribute("title", "Describe REPLICASET");
                          // The DESCRIBE link
                          let linkDesc = document.createElement("a");
                          linkDesc.href = "#";
@@ -690,7 +690,7 @@ ipcRenderer.on("output:get_all", (e, kube) => {
         oldTbodyStateFulSet.remove();
     }
 
-    // Ste the statefulset count
+    // Set the statefulset count
     document.querySelector("#statefulset-count").innerHTML = kube.stateFulSets.length;
 
     let tbodyStatefulset = document.createElement("tbody");
@@ -705,7 +705,7 @@ ipcRenderer.on("output:get_all", (e, kube) => {
                          // The DESCRIBE icon
                          let iconDesc = document.createElement("i");
                          iconDesc.setAttribute("class", "fas fa-question-circle");
-                         iconDesc.setAttribute("title", "Describe POD");
+                         iconDesc.setAttribute("title", "Describe STATEFULSET");
                          // The DESCRIBE link
                          let linkDesc = document.createElement("a");
                          linkDesc.href = "#";
@@ -792,6 +792,401 @@ ipcRenderer.on("output:get_all", (e, kube) => {
 
     });
     statefulSetTable.appendChild(tbodyStatefulset);
+
+
+
+    // DAEMONSETS //
+    const daemonSetTable = document.querySelector("#daemonsetList");
+
+    // First delete the daemonset tbody if any
+    let oldTbodyDaemonSet = daemonSetTable.querySelector("tbody");
+    if(null !== oldTbodyDaemonSet) {
+        console.log("Removing tbody of daemonset list.");
+        oldTbodyDaemonSet.remove();
+    }
+
+    // Set the daemonset count
+    document.querySelector("#daemonset-count").innerHTML = kube.daemonSets.length;
+
+    let tbodyDaemonset = document.createElement("tbody");
+    kube.daemonSets.forEach(daemonset => {
+
+        let tr = document.createElement("tr");
+        
+            // The ACTION links
+            let tdAction = document.createElement("td");
+            tdAction.setAttribute("align", "center");
+
+            // The DESCRIBE icon
+            let iconDesc = document.createElement("i");
+            iconDesc.setAttribute("class", "fas fa-question-circle");
+            iconDesc.setAttribute("title", "Describe DAEMONSET");
+            // The DESCRIBE link
+            let linkDesc = document.createElement("a");
+            linkDesc.href = "#";
+            linkDesc.addEventListener("click", (event) => {
+                event.preventDefault();
+                ipcRenderer.send("execute:command:ext", "kubectl describe daemonset " + daemonset.name);
+            });
+            linkDesc.appendChild(iconDesc);
+            tdAction.appendChild(linkDesc);
+
+            tr.appendChild(tdAction);
+
+
+        // NAME
+        let tdName = document.createElement("td");
+        let nameTxt = document.createElement("span");
+        nameTxt.id = daemonset.name + "-daemonset";
+        nameTxt.innerHTML = daemonset.name;
+        tdName.appendChild(nameTxt);
+
+        // Copy to clipboard link
+        let copyToClipboardLink = document.createElement("a");
+        copyToClipboardLink.href = "#";
+        copyToClipboardLink.innerHTML = '&nbsp;&nbsp;<i class="fas fa-copy"></i>';
+        copyToClipboardLink.addEventListener("click", e => copyText(nameTxt));
+        tdName.appendChild(copyToClipboardLink);
+
+        tr.appendChild(tdName);
+
+        // REFERENCE
+        let tdReference = document.createElement("td");
+        let referenceTxt = document.createTextNode(daemonset.reference);
+        tdReference.appendChild(referenceTxt);
+        tr.appendChild(tdReference);
+
+        // TARGETS
+        let tdTargets = document.createElement("td");
+        let targetsTxt = document.createTextNode(daemonset.targets);
+        tdTargets.appendChild(targetsTxt);
+        tr.appendChild(tdTargets);
+
+        // MINPODS
+        let tdMinpods = document.createElement("td");
+        let minpodsTxt = document.createTextNode(daemonset.minpods);
+        tdMinpods.appendChild(minpodsTxt);
+        tr.appendChild(tdMinpods);
+
+        // MAXPODS
+        let tdMaxpods = document.createElement("td");
+        let maxpodsTxt = document.createTextNode(daemonset.maxpods);
+        tdMaxpods.appendChild(maxpodsTxt);
+        tr.appendChild(tdMaxpods);
+        
+        // REPLICAS
+        let tdReplicas = document.createElement("td");
+        let replicasTxt = document.createTextNode(daemonset.replicas);
+        tdReplicas.appendChild(replicasTxt);
+        tr.appendChild(tdReplicas);
+        
+        // AGE
+        let tdAge = document.createElement("td");
+        let ageTxt = document.createTextNode(daemonset.age);
+        tdAge.appendChild(ageTxt);
+        tr.appendChild(tdAge);
+
+        // DELETE
+        let tdDelete = document.createElement("td");
+        tdDelete.setAttribute("align", "center");
+        // The DELETE icon
+        let iconDelete = document.createElement("i");
+        iconDelete.setAttribute("class", "fas fa-trash-alt");
+        iconDelete.style.color = "RED";
+        iconDelete.setAttribute("title", "Delete Deployment");
+        // The DELETE link
+        let linkDelete = document.createElement("a");
+        linkDelete.href = "#";
+        linkDelete.addEventListener("click", (event) => {
+            event.preventDefault();
+
+            const dialogOptions = {
+                title: "Delete Daemonset", 
+                type: 'question', 
+                buttons: ['OK', 'Cancel'], 
+                message: 'Do it?', 
+                detail : "Are you sure you want to delete this daemonset : " + daemonset.name + "?",
+                icon: path.join(__dirname, 'assets', 'icons', 'icon_delete.png')}
+            dialog.showMessageBox(dialogOptions, i => {
+                if(i == 0) ipcRenderer.send("execute:command:ext", "kubectl delete daemonset " + daemonset.name);
+            });
+        });
+        linkDelete.appendChild(iconDelete);
+        tdDelete.appendChild(linkDelete);
+        tr.appendChild(tdDelete);
+
+        tbodyDaemonset.appendChild(tr);
+
+    });
+    daemonSetTable.appendChild(tbodyDaemonset);
+
+
+
+    // JOBS //
+    const jobTable = document.querySelector("#jobList");
+
+    // First delete the job tbody if any
+    let oldTbodyJob = jobTable.querySelector("tbody");
+    if(null !== oldTbodyJob) {
+        console.log("Removing tbody of job list.");
+        oldTbodyJob.remove();
+    }
+
+    // Set the job count
+    document.querySelector("#job-count").innerHTML = kube.jobs.length;
+
+    let tbodyJob = document.createElement("tbody");
+    kube.jobs.forEach(job => {
+
+        let tr = document.createElement("tr");
+        
+            // The ACTION links
+            let tdAction = document.createElement("td");
+            tdAction.setAttribute("align", "center");
+
+            // The DESCRIBE icon
+            let iconDesc = document.createElement("i");
+            iconDesc.setAttribute("class", "fas fa-question-circle");
+            iconDesc.setAttribute("title", "Describe JOB");
+            // The DESCRIBE link
+            let linkDesc = document.createElement("a");
+            linkDesc.href = "#";
+            linkDesc.addEventListener("click", (event) => {
+                event.preventDefault();
+                ipcRenderer.send("execute:command:ext", "kubectl describe job " + job.name);
+            });
+            linkDesc.appendChild(iconDesc);
+            tdAction.appendChild(linkDesc);
+
+            tr.appendChild(tdAction);
+
+
+        // NAME
+        let tdName = document.createElement("td");
+        let nameTxt = document.createElement("span");
+        nameTxt.id = job.name + "-job";
+        nameTxt.innerHTML = job.name;
+        tdName.appendChild(nameTxt);
+
+        // Copy to clipboard link
+        let copyToClipboardLink = document.createElement("a");
+        copyToClipboardLink.href = "#";
+        copyToClipboardLink.innerHTML = '&nbsp;&nbsp;<i class="fas fa-copy"></i>';
+        copyToClipboardLink.addEventListener("click", e => copyText(nameTxt));
+        tdName.appendChild(copyToClipboardLink);
+
+        tr.appendChild(tdName);
+
+        // COMPLETIONS
+        let tdCompletion = document.createElement("td");
+        let completionTxt = document.createTextNode(job.completions);
+        tdCompletion.appendChild(completionTxt);
+        tr.appendChild(tdCompletion);
+
+        // DURATION
+        let tdDuration = document.createElement("td");
+        let durationTxt = document.createTextNode(job.duration);
+        tdDuration.appendChild(durationTxt);
+        tr.appendChild(tdDuration);
+
+        // AGE
+        let tdAge = document.createElement("td");
+        let ageTxt = document.createTextNode(job.age);
+        tdAge.appendChild(ageTxt);
+        tr.appendChild(tdAge);
+
+        // CONTAINERS
+        let tdContainers = document.createElement("td");
+        let containersTxt = document.createTextNode(job.containers);
+        tdContainers.appendChild(containersTxt);
+        tr.appendChild(tdContainers);
+
+        // IMAGES
+        let tdImages = document.createElement("td");
+        let imagesTxt = document.createTextNode(job.images);
+        tdImages.appendChild(imagesTxt);
+        tr.appendChild(tdImages);
+        
+        // SELECTOR
+        let tdSelector = document.createElement("td");
+        let selectorTxt = document.createTextNode(job.selector);
+        tdSelector.appendChild(selectorTxt);
+        tr.appendChild(tdSelector);
+    
+
+        // DELETE
+        let tdDelete = document.createElement("td");
+        tdDelete.setAttribute("align", "center");
+        // The DELETE icon
+        let iconDelete = document.createElement("i");
+        iconDelete.setAttribute("class", "fas fa-trash-alt");
+        iconDelete.style.color = "RED";
+        iconDelete.setAttribute("title", "Delete Deployment");
+        // The DELETE link
+        let linkDelete = document.createElement("a");
+        linkDelete.href = "#";
+        linkDelete.addEventListener("click", (event) => {
+            event.preventDefault();
+
+            const dialogOptions = {
+                title: "Delete Job", 
+                type: 'question', 
+                buttons: ['OK', 'Cancel'], 
+                message: 'Do it?', 
+                detail : "Are you sure you want to delete this job : " + job.name + "?",
+                icon: path.join(__dirname, 'assets', 'icons', 'icon_delete.png')}
+            dialog.showMessageBox(dialogOptions, i => {
+                if(i == 0) ipcRenderer.send("execute:command:ext", "kubectl delete job " + job.name);
+            });
+        });
+        linkDelete.appendChild(iconDelete);
+        tdDelete.appendChild(linkDelete);
+        tr.appendChild(tdDelete);
+
+        tbodyJob.appendChild(tr);
+
+    });
+    jobTable.appendChild(tbodyJob);
+
+    
+
+    // CRONJOBS //
+    const cronjobTable = document.querySelector("#cronjobList");
+
+    // First delete the cronjob tbody if any
+    let oldTbodyCronjob = cronjobTable.querySelector("tbody");
+    if(null !== oldTbodyCronjob) {
+        console.log("Removing tbody of cronjob list.");
+        oldTbodyCronjob.remove();
+    }
+
+    // Set the cronjob count
+    document.querySelector("#cronjob-count").innerHTML = kube.cronjobs.length;
+
+    let tbodyCronjob = document.createElement("tbody");
+    kube.cronjobs.forEach(cronjob => {
+
+        let tr = document.createElement("tr");
+        
+        // The ACTION links
+        let tdAction = document.createElement("td");
+        tdAction.setAttribute("align", "center");
+
+        // The DESCRIBE icon
+        let iconDesc = document.createElement("i");
+        iconDesc.setAttribute("class", "fas fa-question-circle");
+        iconDesc.setAttribute("title", "Describe CRONJOB");
+        // The DESCRIBE link
+        let linkDesc = document.createElement("a");
+        linkDesc.href = "#";
+        linkDesc.addEventListener("click", (event) => {
+            event.preventDefault();
+            ipcRenderer.send("execute:command:ext", "kubectl describe cronjob " + cronjob.name);
+        });
+        linkDesc.appendChild(iconDesc);
+        tdAction.appendChild(linkDesc);
+
+        tr.appendChild(tdAction);
+
+
+        // NAME
+        let tdName = document.createElement("td");
+        let nameTxt = document.createElement("span");
+        nameTxt.id = cronjob.name + "-cronjob";
+        nameTxt.innerHTML = cronjob.name;
+        tdName.appendChild(nameTxt);
+
+        // Copy to clipboard link
+        let copyToClipboardLink = document.createElement("a");
+        copyToClipboardLink.href = "#";
+        copyToClipboardLink.innerHTML = '&nbsp;&nbsp;<i class="fas fa-copy"></i>';
+        copyToClipboardLink.addEventListener("click", e => copyText(nameTxt));
+        tdName.appendChild(copyToClipboardLink);
+
+        tr.appendChild(tdName);
+
+        // SCHEDULE
+        let tdSchedule = document.createElement("td");
+        let scheduleTxt = document.createTextNode(cronjob.schedule);
+        tdSchedule.appendChild(scheduleTxt);
+        tr.appendChild(tdSchedule);
+
+        // SUSPEND
+        let tdSuspend = document.createElement("td");
+        let durationTxt = document.createTextNode(cronjob.suspend);
+        tdSuspend.appendChild(durationTxt);
+        tr.appendChild(tdSuspend);
+
+        // ACTIVE
+        let tdActive = document.createElement("td");
+        let activeTxt = document.createTextNode(cronjob.active);
+        tdActive.appendChild(activeTxt);
+        tr.appendChild(tdActive);
+
+        // LAST SCHEDULE
+        let tdLastSchedule = document.createElement("td");
+        let lastScheduleTxt = document.createTextNode(cronjob.lastschedule);
+        tdLastSchedule.appendChild(lastScheduleTxt);
+        tr.appendChild(tdLastSchedule);
+
+        // AGE
+        let tdAge = document.createElement("td");
+        let ageTxt = document.createTextNode(cronjob.age);
+        tdAge.appendChild(ageTxt);
+        tr.appendChild(tdAge);
+
+        // CONTAINERS
+        let tdContainers = document.createElement("td");
+        let containersTxt = document.createTextNode(cronjob.containers);
+        tdContainers.appendChild(containersTxt);
+        tr.appendChild(tdContainers);
+
+        // IMAGES
+        let tdImages = document.createElement("td");
+        let imagesTxt = document.createTextNode(cronjob.images);
+        tdImages.appendChild(imagesTxt);
+        tr.appendChild(tdImages);
+        
+        // SELECTOR
+        let tdSelector = document.createElement("td");
+        let selectorTxt = document.createTextNode(cronjob.selector);
+        tdSelector.appendChild(selectorTxt);
+        tr.appendChild(tdSelector);
+    
+
+        // DELETE
+        let tdDelete = document.createElement("td");
+        tdDelete.setAttribute("align", "center");
+        // The DELETE icon
+        let iconDelete = document.createElement("i");
+        iconDelete.setAttribute("class", "fas fa-trash-alt");
+        iconDelete.style.color = "RED";
+        iconDelete.setAttribute("title", "Delete Cronjob");
+        // The DELETE link
+        let linkDelete = document.createElement("a");
+        linkDelete.href = "#";
+        linkDelete.addEventListener("click", (event) => {
+            event.preventDefault();
+
+            const dialogOptions = {
+                title: "Delete Cronjob", 
+                type: 'question', 
+                buttons: ['OK', 'Cancel'], 
+                message: 'Do it?', 
+                detail : "Are you sure you want to delete this cronjob : " + cronjob.name + "?",
+                icon: path.join(__dirname, 'assets', 'icons', 'icon_delete.png')}
+            dialog.showMessageBox(dialogOptions, i => {
+                if(i == 0) ipcRenderer.send("execute:command:ext", "kubectl delete cronjob " + cronjob.name);
+            });
+        });
+        linkDelete.appendChild(iconDelete);
+        tdDelete.appendChild(linkDelete);
+        tr.appendChild(tdDelete);
+
+        tbodyCronjob.appendChild(tr);
+
+    });
+    cronjobTable.appendChild(tbodyCronjob);
     
 
     console.log('The loading screen should go away now...');
@@ -823,6 +1218,9 @@ const serviceContainer = document.getElementById('service-container');
 const deploymentContainer = document.getElementById('deployment-container');
 const replicasetContainer = document.getElementById('replicaset-container');
 const stateFulSetContainer = document.getElementById('statefulset-container');
+const daemonSetContainer = document.getElementById('daemonset-container');
+const jobContainer = document.getElementById('job-container');
+const cronjobContainer = document.getElementById('cronjob-container');
 
 
 const links = document.querySelectorAll('a.navbar-item');
@@ -835,11 +1233,14 @@ links.forEach(a => a.addEventListener("click", e => {
         case 'DEPLOYMENT' : showOneHideOthers(deploymentContainer); break;
         case 'REPLICASET' : showOneHideOthers(replicasetContainer); break;
         case 'STATEFULSET' : showOneHideOthers(stateFulSetContainer); break;
+        case 'DAEMONSET' : showOneHideOthers(daemonSetContainer); break;
+        case 'JOB' : showOneHideOthers(jobContainer); break;
+        case 'CRONJOB' : showOneHideOthers(cronjobContainer); break;
     }
 })
 );
 
-document.querySelector("#more-link")
+document.querySelector("#workloads-link")
         .querySelectorAll("a.navbar-item")
         .forEach(element => {
             element.addEventListener("click", e => {
@@ -849,6 +1250,9 @@ document.querySelector("#more-link")
                     case 'DEPLOYMENT' : showOneHideOthers(deploymentContainer); break;
                     case 'REPLICASET' : showOneHideOthers(replicasetContainer); break;
                     case 'STATEFULSET' : showOneHideOthers(stateFulSetContainer); break;
+                    case 'DAEMONSET' : showOneHideOthers(daemonSetContainer); break;
+                    case 'JOB' : showOneHideOthers(jobContainer); break;
+                    case 'CRONJOB' : showOneHideOthers(cronjobContainer); break;
                 }
             });
         }
@@ -860,6 +1264,9 @@ const showOneHideOthers = (container) => {
     deploymentContainer.style.display = 'none';
     replicasetContainer.style.display = 'none';
     stateFulSetContainer.style.display = 'none';
+    daemonSetContainer.style.display = 'none';
+    jobContainer.style.display = 'none';
+    cronjobContainer.style.display = 'none';
     container.style.display = 'block';
 }
 
@@ -889,4 +1296,8 @@ const shorten = (input) => {
     } else {
         return input;
     }
+}
+
+const isFailedStatus = status => {
+    return (status == "CrashLoopBackOff" || status == "Evicted" || status == "Failed");
 }

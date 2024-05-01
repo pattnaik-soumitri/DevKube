@@ -5,6 +5,9 @@ class Kube {
     deployments = []; // DEPLOYMENTS
     replicasets = []; // REPLICASETS
     stateFulSets = []; // STATEFULSETS
+    daemonSets = []; // DAEMONSETS
+    jobs = []; // JOBS
+    cronjobs = []; // CRONJOBS
 
     /**
      * This constructor takes the output of the following command as a whole :
@@ -15,6 +18,9 @@ class Kube {
      * - services
      * - deployments
      * - replicasets
+     * - daemonsets
+     * - jobs
+     * - cronjobs
      * 
      * @param {*} Kube
      */
@@ -24,47 +30,23 @@ class Kube {
         // This will store in the following format
         /*
         {
-        pod: [
-            'name',
-            'ready',
-            'status',
-            'restarts',
-            'age',
-            'ip',
-            'node',
-            'nominatednode',
-            'readinessgates'
-        ],
-        service: [
-            'name',
-            'type',
-            'clusterIp',
-            'externalIp',
-            'ports',
-            'age',
-            'selector'
-        ],
-        deployment: [
-            'name',
-            'ready',
-            'upToDate',
-            'available',
-            'age',
-            'containers',
-            'images',
-            'selector'
-        ],
-        replicaset: [
-            'name',
-            'desired',
-            'current',
-            'ready',
-            'age',
-            'containers',
-            'images',
-            'selector'
-        ],
-        statefulset: [ 'name', 'ready', 'age', 'containers', 'images' ]
+        
+            pod: [ 'name','ready','status','restarts','age','ip','node','nominatednode','readinessgates' ],
+            
+            service: [ 'name','type','clusterIp','externalIp','ports','age','selector' ],
+            
+            deployment: [ 'name','ready','upToDate','available','age','containers','images','selector' ],
+            
+            replicaset: [ 'name','desired','current','ready','age','containers','images','selector' ],
+            
+            statefulset: [ 'name', 'ready', 'age', 'containers', 'images' ],
+
+            daemonset: ['name', 'reference', 'targets', 'minpods', 'maxpods', 'replicas', 'age'],
+
+            job: [ NAME COMPLETIONS DURATION AGE CONTAINERS IMAGES SELECTOR ],
+
+            cronjobs: [ NAME SCHEDULE SUSPEND ACTIVE LAST-SCHEDULE AGE CONTAINERS IMAGES SELECTOR ]
+        }
         */
         let headerMap = {}; 
 
@@ -85,10 +67,15 @@ class Kube {
                 }
             } else {
                 // This row here is a non-header / resource row
-                const fieldsValues = row.split(" ").filter(e => e !== " " && e !== "");
+                let splitter = " ";
+                if(row.startsWith("cronjob.batch")) {
+                    splitter = "  ";
+                }
+
+                let fieldsValues = row.split(splitter).filter(e => e !== " " && e !== "");
                 if(fieldsValues.length > 0) {
                     // parsing resource type from `pods/xxx` | resourceType = 'pod'
-                    const resourceType = fieldsValues[0].split('/')[0].split('.')[0];
+                    const resourceType = fieldsValues[0].split('/')[0].split('.')[0].trim();
                     const headers = headerMap[resourceType];
                     
                     const resource = {}; // The resource (pod/service/deployment ...)
@@ -98,9 +85,9 @@ class Kube {
                         // This is for removing the prefix from the name
                         // pod/xxx -> xxx
                         if(j === 0) {
-                            resource[headers[j]] = fieldsValues[j].split('/')[1];
+                            resource[headers[j]] = fieldsValues[j].split('/')[1].trim();
                         } else {
-                            resource[headers[j]] = fieldsValues[j];
+                            resource[headers[j]] = fieldsValues[j].trim();
                         }
                     }
 
@@ -111,6 +98,9 @@ class Kube {
                         case 'deployment': this.deployments.push(resource); break;
                         case 'replicaset': this.replicasets.push(resource); break;
                         case 'statefulset': this.stateFulSets.push(resource); break;
+                        case 'daemonset': this.daemonSets.push(resource); break;
+                        case 'job': this.jobs.push(resource); break;
+                        case 'cronjob': this.cronjobs.push(resource); break;
                     }
                 }
             }
@@ -129,5 +119,6 @@ function cleanup(input) {
     // This will convert `ports)` to `ports`
     return input.replace(/[^A-Za-z0-9]/g, '');
 }
+
 
 module.exports = Kube;

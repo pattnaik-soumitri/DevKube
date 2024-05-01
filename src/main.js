@@ -96,7 +96,8 @@ const getNamespace = () => {
 
     exec('kubectl get namespace', (err, stdout, stderr) => {
         // console.log(stdout);
-
+        if(err) console.error(err);
+        if(stderr) console.error(stderr);
         let rows = stdout.split('\n'); // Break the output by lines  
         rows.shift(); // Remove the header row
         rows.pop(); // Remove last blank row
@@ -114,6 +115,44 @@ const getNamespace = () => {
 
         // Call to render actual data
         sendDataToWindow(mainWindow, 'output:get_namespace', {showLoading: false, namespaces, currentNamespace});
+    });
+}
+
+const getNodes = () => {
+    console.log('getNodes() called ...');
+
+    // call to show loading animation
+    sendDataToWindow(mainWindow, 'output:get_nodes', {showLoading:true, contexts: null});
+
+    exec('kubectl get nodes', (err, stdout, stderr) => {
+        // console.log(stdout);
+
+        let rows = stdout.split('\n'); // Break the output by lines  
+        rows.shift(); // Remove the header row
+        rows.pop(); // Remove last blank row
+        
+        // Empty contexts[]
+        while(contexts.length > 0) {
+            contexts.pop();
+        }
+        rows.forEach(row => contexts.push(Context.fromOutputRow(row)));
+        // console.log('contexts : ', contexts);
+
+        contexts.filter(context => context.current)
+                .forEach(context => currentContext = context);
+        console.log('Current context : ', currentContext);
+
+        // Change the current namespace name if the current context has a namespace set
+        if(currentContext.namespace) {
+            currentNamespaceName = currentContext.namespace;
+        }
+
+        // Call to render actual data
+        sendDataToWindow(mainWindow, 'output:get_context', {showLoading:false, contexts});
+
+        // Call the get namespace
+        getNamespace();
+        
     });
 }
 

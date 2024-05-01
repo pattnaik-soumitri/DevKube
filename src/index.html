@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-extensions@6.2.7/dist/css/bulma-extensions.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bulma-extensions@6.2.7/dist/js/bulma-extensions.min.js"></script>
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
@@ -13,6 +13,7 @@
         body {
             font-size: 80%;
         }
+        
         .footer {
             position: fixed;
             left: 0;
@@ -39,9 +40,7 @@
     </style>
 </head>
 <body>
-
-    <div class="container">
-        
+    <header>
         <nav class="navbar" role="navigation" aria-label="main navigation" style="padding: 5px;">
             <!-- THE ICON -->
             <div class="navbar-brand">
@@ -52,21 +51,29 @@
                     <span aria-hidden="true"></span>
                 </a>
             </div>
-
+    
             <div id="navbar" class="navbar-menu">
                 <!-- NAV START-->
                 <div class="navbar-start">
-                    <a class="navbar-item">POD</a>
-                    <a class="navbar-item">SERVICE</a>
-                    <a class="navbar-item">DEPLOYMENT</a>
                     <div class="navbar-item has-dropdown is-hoverable">
-                        <a class="navbar-link">More</a>
-                        <div id="more-link" class="navbar-dropdown">
+                        <a class="navbar-link">Workloads</a>
+                        <div id="workloads-link" class="navbar-dropdown">
+                            <a class="navbar-item">POD</a>
+                            <a class="navbar-item">SERVICE</a>
+                            <a class="navbar-item">DEPLOYMENT</a>
                             <a class="navbar-item">REPLICASET</a>
                             <a class="navbar-item">STATEFULSET</a>
+                            <a class="navbar-item">DAEMONSET</a>
+                            <a class="navbar-item">JOB</a>
+                            <a class="navbar-item">CRONJOB</a>
                         </div>
                     </div>
-
+    
+                </div>
+    
+                <!-- NAV END-->
+                <div class="navbar-end">
+    
                     <!--CONTEXT-MENU-->
                     <div id="context-menu" class="navbar-item has-dropdown is-hoverable">
                         <a id="context-current" class="navbar-link">
@@ -78,7 +85,7 @@
                         <div id="context-options" class="navbar-dropdown">
                         </div>
                     </div>
-
+    
                     <!--NAMESPACE-MENU-->
                     <div id="namespace-menu" class="navbar-item has-dropdown is-hoverable">
                         <a id="namespace-current" class="navbar-link">
@@ -91,11 +98,7 @@
                         </div>
                     </div>
 
-                </div>
-
-                <!-- NAV END-->
-                <div class="navbar-end">
-
+                    <!-- REFRESH BUTTON -->
                     <div class="navbar-item">
                         <div class="buttons">
                             <a id="refresh" class="button is-primary" style="display: none; background: #3169DF; color: white;">
@@ -106,132 +109,206 @@
                             </a>
                         </div>
                     </div>
-
+    
                 </div>
             </div>
         </nav>
+    </header>
 
-        
-        <div id="progress" >
-            <h3>Running kubectl ...</h3>
-            <progress class="progress is-small" max="100">15%</progress>
+    <main>
+        <div class="container">
+            <div id="progress" >
+                <h3>Running kubectl ...</h3>
+                <progress class="progress is-small" max="100">15%</progress>
+            </div>
+            
+            <br/>
+    
+            <div id="kube-container" align="center" style="display: none;">
+    
+                <!-- PODS -->
+                <!-- pod: [ 'name','ready','status','restarts','age','ip','node','nominatednode','readinessgates' ], -->
+                <div id="pod-container" align="center" style="display: block;">
+                <span style="font-size: large; font-weight: bold;">PODS <span id="pod-count" class="tag is-small is-light"></span> </span>
+                    <table id="podList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                        <thead>
+                            <tr style="text-align: center;">
+                                <th>ACTION</th>
+                                <th>NAME</th>
+                                <th>IP</th>
+                                <th>READY</th>
+                                <th>STATUS</th>
+                                <th>RESTARTS</th>
+                                <th>AGE</th>
+                                <th>NODE</th>
+                                <th>DELETE</th>
+                            </tr>
+                        </thead>
+                    </table>          
+                    <br/><br/> 
+                </div>
+    
+                <!-- SERVICES -->
+                <!-- service: [ 'name','type','clusterIp','externalIp','ports','age','selector' ], -->
+                <div id="service-container" align="center" style="display: none;">
+                    <span style="font-size: large; font-weight: bold;">SERVICES <span id="service-count" class="tag is-small"></span> </span>
+                    <table id="serviceList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                        <thead>
+                            <tr style="text-align: center;">
+                                <th>ACTION</th>
+                                <th>NAME</th>
+                                <th>TYPE</th>
+                                <th>CLUSTER-IP</th>
+                                <th>EXTERNAL-IP</th>
+                                <th>PORT(S)</th>
+                                <th>AGE</th>
+                                <th>SELECTOR</th>
+                                <th>DELETE</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <br/> <br/>
+                </div>
+    
+    
+                <!-- DEPLOYMENTS -->
+                <!-- deployment: [ 'name','ready','upToDate','available','age','containers','images','selector' ], -->
+                <div id="deployment-container" align="center" style="display: none;">
+                    <span style="font-size: large; font-weight: bold;">DEPLOYMENTS <span id="deployment-count" class="tag is-small"></span> </span>
+                    <table id="deploymentList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                        <thead>
+                            <tr style="text-align: center;">
+                                <th>ACTION</th>
+                                <th>NAME</th>
+                                <th style="font-size: small;">READY</th>
+                                <th style="font-size: small;">UP-TO-DATE</th>
+                                <th style="font-size: small;">AVAILABLE</th>
+                                <th style="font-size: small;">AGE</th>
+                                <th>CONTAINERS</th>
+                                <th>IMAGES</th>
+                                <th>SELECTOR</th>
+                                <th>DELETE</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <br/> <br/>
+                </div>
+    
+    
+                <!-- REPLICASETS -->
+                <!-- replicaset: [ 'name','desired','current','ready','age','containers','images','selector' ], -->
+                <div id="replicaset-container" align="center" style="display: none;">
+                    <span style="font-size: large; font-weight: bold;">REPLICASETS <span id="replicaset-count" class="tag is-small"></span> </span>
+                    <table id="replicasetList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                        <thead>
+                            <tr style="text-align: center;">
+                                <th>Action</th>
+                                <th>NAME</th>
+                                <th>DESIRED</th>
+                                <th>CURRENT</th>
+                                <th>READY</th>
+                                <th>AGE</th>
+                                <th>CONTAINERS</th>
+                                <th>IMAGES</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <br/> <br/>
+                </div>
+    
+    
+                <!-- STATEFULSETS -->
+                <!-- statefulset: [ 'name', 'ready', 'age', 'containers', 'images' ], -->
+                <div id="statefulset-container" align="center" style="display: none;">
+                    <span style="font-size: large; font-weight: bold;">STATEFULSETS <span id="statefulset-count" class="tag is-small"></span> </span>
+                    <table id="statefulsetList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                        <thead>
+                            <tr style="text-align: center;">
+                                <th>ACTION</th>
+                                <th>NAME</th>
+                                <th>READY</th>
+                                <th>AGE</th>
+                                <th>CONTAINERS</th>
+                                <th>IMAGES</th>
+                                <th>DELETE</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <br/> <br/>
+                </div>
+
+                <!-- DAEMONSETS -->
+                <!-- daemonset: ['name', 'reference', 'targets', 'minpods', 'maxpods', 'replicas', 'age'], -->
+                <div id="daemonset-container" align="center" style="display: none;">
+                    <span style="font-size: large; font-weight: bold;">DAEMONSETS <span id="daemonset-count" class="tag is-small"></span> </span>
+                    <table id="daemonsetList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                        <thead>
+                            <tr style="text-align: center;">
+                                <th>ACTION</th>
+                                <th>NAME</th>
+                                <th>REFERENCE</th>
+                                <th>TARGETS</th>
+                                <th>MINPODS</th>
+                                <th>MAXPODS</th>
+                                <th>REPLICAS</th>
+                                <th>AGE</th>
+                                <th>DELETE</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <br/> <br/>
+                </div>
+
+                <!-- JOBS -->
+                <!-- job: [ NAME COMPLETIONS DURATION AGE CONTAINERS IMAGES SELECTOR ], -->
+                <div id="job-container" align="center" style="display: none;">
+                    <span style="font-size: large; font-weight: bold;">JOBS <span id="job-count" class="tag is-small"></span> </span>
+                    <table id="jobList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                        <thead>
+                            <tr style="text-align: center;">
+                                <th>ACTION</th>
+                                <th>NAME</th>
+                                <th>COMPLETIONS</th>
+                                <th>DURATION</th>
+                                <th>AGE</th>
+                                <th>CONTAINERS</th>
+                                <th>IMAGES</th>
+                                <th>SELECTOR</th>
+                                <th>DELETE</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <br/> <br/>
+                </div>
+
+                <!-- CRONJOBS -->
+                <!-- cronjobs: [ NAME SCHEDULE SUSPEND ACTIVE LAST-SCHEDULE AGE CONTAINERS IMAGES SELECTOR ] -->
+                <div id="cronjob-container" align="center" style="display: none;">
+                    <span style="font-size: large; font-weight: bold;">CRONJOBS <span id="cronjob-count" class="tag is-small"></span> </span>
+                    <table id="cronjobList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                        <thead>
+                            <tr style="text-align: center;">
+                                <th>ACTION</th>
+                                <th>NAME</th>
+                                <th>SCHEDULE</th>
+                                <th>SUSPEND</th>
+                                <th>ACTIVE</th>
+                                <th>LAST SCHEDULE</th>
+                                <th>AGE</th>
+                                <th>CONTAINERS</th>
+                                <th>IMAGES</th>
+                                <th>SELECTOR</th>
+                                <th>DELETE</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <br/> <br/>
+                </div>
+                    
+            </div>
+    
         </div>
-        
-
-        <br/>
-
-        <div id="kube-container" align="center" style="display: none;">
-
-            <!-- PODS -->
-            <div id="pod-container" align="center" style="display: block;">
-            <span style="font-size: large; font-weight: bold;">PODS <span id="pod-count" class="tag is-small"></span> </span>
-                <table id="podList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-                    <thead>
-                        <tr style="text-align: center;">
-                            <th>ACTION</th>
-                            <th>NAME</th>
-                            <th>IP</th>
-                            <th>READY</th>
-                            <th>STATUS</th>
-                            <th>RESTARTS</th>
-                            <th>AGE</th>
-                            <th>NODE</th>
-                            <th>DELETE</th>
-                        </tr>
-                    </thead>
-                </table>          
-                <br/><br/> 
-            </div>
-
-            <!-- SERVICES -->
-            <div id="service-container" align="center" style="display: none;">
-                <span style="font-size: large; font-weight: bold;">SERVICES <span id="service-count" class="tag is-small"></span> </span>
-                <table id="serviceList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-                    <thead>
-                        <tr style="text-align: center;">
-                            <th>ACTION</th>
-                            <th>NAME</th>
-                            <th>TYPE</th>
-                            <th>CLUSTER-IP</th>
-                            <th>EXTERNAL-IP</th>
-                            <th>PORT(S)</th>
-                            <th>AGE</th>
-                            <th>SELECTOR</th>
-                            <th>DELETE</th>
-                        </tr>
-                    </thead>
-                </table>
-                <br/> <br/>
-            </div>
-
-
-            <!-- DEPLOYMENTS -->
-            <div id="deployment-container" align="center" style="display: none;">
-                <span style="font-size: large; font-weight: bold;">DEPLOYMENTS <span id="deployment-count" class="tag is-small"></span> </span>
-                <table id="deploymentList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-                    <thead>
-                        <tr style="text-align: center;">
-                            <th>ACTION</th>
-                            <th>NAME</th>
-                            <th style="font-size: small;">READY</th>
-                            <th style="font-size: small;">UP-TO-DATE</th>
-                            <th style="font-size: small;">AVAILABLE</th>
-                            <th style="font-size: small;">AGE</th>
-                            <th>CONTAINERS</th>
-                            <th>IMAGES</th>
-                            <th>SELECTOR</th>
-                            <th>DELETE</th>
-                        </tr>
-                    </thead>
-                </table>
-                <br/> <br/>
-            </div>
-
-
-            <!-- REPLICASETS -->
-            <div id="replicaset-container" align="center" style="display: none;">
-                <span style="font-size: large; font-weight: bold;">REPLICASETS <span id="replicaset-count" class="tag is-small"></span> </span>
-                <table id="replicasetList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-                    <thead>
-                        <tr style="text-align: center;">
-                            <th>Action</th>
-                            <th>NAME</th>
-                            <th>DESIRED</th>
-                            <th>CURRENT</th>
-                            <th>READY</th>
-                            <th>AGE</th>
-                            <th>CONTAINERS</th>
-                            <th>IMAGES</th>
-                        </tr>
-                    </thead>
-                </table>
-                <br/> <br/>
-            </div>
-
-
-            <!-- STATEFULSETS -->
-            <div id="statefulset-container" align="center" style="display: none;">
-                <span style="font-size: large; font-weight: bold;">STATEFULSETS <span id="statefulset-count" class="tag is-small"></span> </span>
-                <table id="statefulsetList" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-                    <thead>
-                        <tr style="text-align: center;">
-                            <th>ACTION</th>
-                            <th>NAME</th>
-                            <th>READY</th>
-                            <th>AGE</th>
-                            <th>CONTAINERS</th>
-                            <th>IMAGES</th>
-                            <th>DELETE</th>
-                        </tr>
-                    </thead>
-                </table>
-                <br/> <br/>
-            </div>
-                
-        </div>
-
-    </div>
-
+    </main>
     
     <footer class="footer">
         <div style="display: flow-root;">
@@ -239,7 +316,6 @@
         </div>    
     </footer>
 
-
-    <script src="index.js"></script>
+    <script type="module" src="index.js"></script>
 </body>
 </html>
