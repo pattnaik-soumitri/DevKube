@@ -67,11 +67,7 @@ class Kube {
                 }
             } else {
                 // This row here is a non-header / resource row
-                let splitter = " ";
-                if(row.startsWith("cronjob.batch")) {
-                    splitter = "  ";
-                }
-
+                let splitter = "  ";
                 let fieldsValues = row.split(splitter).filter(e => e !== " " && e !== "");
                 if(fieldsValues.length > 0) {
                     // parsing resource type from `pods/xxx` | resourceType = 'pod'
