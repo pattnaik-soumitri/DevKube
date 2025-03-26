@@ -850,35 +850,41 @@ ipcRenderer.on("output:get_all", (e, kube) => {
 
         tr.appendChild(tdName);
 
-        // REFERENCE
-        let tdReference = document.createElement("td");
-        let referenceTxt = document.createTextNode(daemonset.reference);
-        tdReference.appendChild(referenceTxt);
-        tr.appendChild(tdReference);
+        // DESIRED
+        let tdDesired = document.createElement("td");
+        let desiredTxt = document.createTextNode(daemonset.desired);
+        tdDesired.appendChild(desiredTxt);
+        tr.appendChild(tdDesired);
 
-        // TARGETS
-        let tdTargets = document.createElement("td");
-        let targetsTxt = document.createTextNode(daemonset.targets);
-        tdTargets.appendChild(targetsTxt);
-        tr.appendChild(tdTargets);
+        // CURRENT
+        let tdCurrent = document.createElement("td");
+        let currentTxt = document.createTextNode(daemonset.current);
+        tdCurrent.appendChild(currentTxt);
+        tr.appendChild(tdCurrent);
 
-        // MINPODS
-        let tdMinpods = document.createElement("td");
-        let minpodsTxt = document.createTextNode(daemonset.minpods);
-        tdMinpods.appendChild(minpodsTxt);
-        tr.appendChild(tdMinpods);
+        // READY
+        let tdReady = document.createElement("td");
+        let readyTxt = document.createTextNode(daemonset.ready);
+        tdReady.appendChild(readyTxt);
+        tr.appendChild(tdReady);
 
-        // MAXPODS
-        let tdMaxpods = document.createElement("td");
-        let maxpodsTxt = document.createTextNode(daemonset.maxpods);
-        tdMaxpods.appendChild(maxpodsTxt);
-        tr.appendChild(tdMaxpods);
+        // UP-TO-DATE
+        let tdUpToDate = document.createElement("td");
+        let upToDateTxt = document.createTextNode(daemonset.upToDate);
+        tdUpToDate.appendChild(upToDateTxt);
+        tr.appendChild(tdUpToDate);
         
-        // REPLICAS
-        let tdReplicas = document.createElement("td");
-        let replicasTxt = document.createTextNode(daemonset.replicas);
-        tdReplicas.appendChild(replicasTxt);
-        tr.appendChild(tdReplicas);
+        // AVAILABLE
+        let tdAvailable = document.createElement("td");
+        let availableTxt = document.createTextNode(daemonset.available);
+        tdAvailable.appendChild(availableTxt);
+        tr.appendChild(tdAvailable);
+
+        // NODE SELECTOR
+        let tdNodeSelector = document.createElement("td");
+        let nodeSelectorTxt = document.createTextNode(daemonset.nodeselector);
+        tdNodeSelector.appendChild(nodeSelectorTxt);
+        tr.appendChild(tdNodeSelector);
         
         // AGE
         let tdAge = document.createElement("td");
