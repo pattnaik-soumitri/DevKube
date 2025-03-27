@@ -1,6 +1,6 @@
 # **Dev<span style='color: #3169DF;'>Kube</span>**
 
-**Q.** What DevKube **<span style='color: green;'>is</span>**?<br/>
+#### What DevKube **<span style='color: green;'>is</span>**?<br/>
  > It runs `kubectl` commands for you.
 
 DevKube is a developer focused cross platform (Linux support is coming soon) `kubectl` GUI. 
@@ -8,7 +8,9 @@ It helps developers and testers by providing a simple yet functional interface t
 
 <br/>
 
-**Q.** What DevKube is **<span style='color: red;'>not</span>**?<br/>
+![screenshot](assets/images/screenshot.png)
+
+#### What DevKube is **<span style='color: red;'>not</span>**?<br/>
 It is not a one stop solution for all things kubectl / Kubernetes. Teams will still need to write kubectl commands for operations which are not available in DevKube.
 
 
